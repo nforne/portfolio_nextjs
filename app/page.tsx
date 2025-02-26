@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useNavigation } from "@/components/providers"
 import Home from "@/components/views/home"
 import About from "@/components/views/about"
 import Projects from "@/components/views/projects"
@@ -21,19 +22,8 @@ const views = [
 
 export default function Page() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [activeView, setActiveView] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
-
-  const scrollToView = useCallback((index: number) => {
-    setIsScrolling(true)
-    setActiveView(index)
-    containerRef.current?.children[index]?.scrollIntoView({
-      behavior: "smooth",
-      inline: "start",
-      block: "nearest",
-    })
-    setTimeout(() => setIsScrolling(false), 1000)
-  }, [])
+  const { scrollToView, activeView, setActiveView } = useNavigation()
 
   const handleScroll = () => {
     if (isScrolling || !containerRef.current) return
@@ -68,81 +58,84 @@ export default function Page() {
   }, [handleWheel])
 
   return (
-    <div className="fixed inset-0 overflow-hidden px-10 py-5">
-      {/* Theme Toggle */}
-      <div className="fixed left-6 top-20 z-50">
-        <ThemeToggle />
+    <div className="fixed inset-0 overflow-hidden">
+      <div className="h-full pt-[69px]">
+        {/* Theme Toggle */}
+        <div className="fixed left-6 top-20 z-50">
+          <ThemeToggle />
+        </div>
+
+        <div
+          ref={containerRef}
+          className="flex h-full snap-x snap-mandatory overflow-x-auto scrollbar-none px-6"
+          onScroll={handleScroll}
+        >
+          {views.map((View, index) => (
+            <motion.div
+              key={View.id}
+              data-view-index={index}
+              className="flex h-full w-full flex-none snap-start items-center justify-center rounded-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <View.component />
+            </motion.div>
+          ))}
+        </div>
+
+        {/* View Indicators */}
+        <div className="fixed right-6 top-20 space-y-2">
+          {views.map((view, index) => (
+            <motion.button
+              key={view.id}
+              className="group relative flex items-center"
+              onClick={() => scrollToView(index)}
+              whileHover={{ scale: 1.2 }}
+            >
+              <span className="absolute right-8 rounded-md bg-background/80 px-2 py-1 text-sm opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover:opacity-100">
+                {view.label}
+              </span>
+              <div
+                className={cn(
+                  "size-3 rounded-full border-[1.5px] border-black dark:border-white transition-all",
+                  activeView === index ? "bg-primary scale-125" : "bg-muted-foreground/30 hover:bg-muted-foreground/50",
+                )}
+              />
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Navigation Buttons */}
+        <AnimatePresence>
+          {activeView > 0 && (
+            <motion.button
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="fixed left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-3 shadow-lg backdrop-blur-sm hover:bg-background border-[1.5px] border-black dark:border-white"
+              onClick={() => scrollToView(activeView - 1)}
+            >
+              <ChevronLeft className="size-6" />
+            </motion.button>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {activeView < views.length - 1 && (
+            <motion.button
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="fixed right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-3 shadow-lg backdrop-blur-sm hover:bg-background border-[1.5px] border-black dark:border-white"
+              onClick={() => scrollToView(activeView + 1)}
+            >
+              <ChevronRight className="size-6" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
-
-      <div
-        ref={containerRef}
-        className="flex h-full snap-x snap-mandatory overflow-x-auto scrollbar-none"
-        onScroll={handleScroll}
-      >
-        {views.map((View, index) => (
-          <motion.div
-            key={View.id}
-            className="flex h-full w-full flex-none snap-start items-center justify-center rounded-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <View.component />
-          </motion.div>
-        ))}
-      </div>
-
-      {/* View Indicators */}
-      <div className="fixed right-6 top-20 space-y-2">
-        {views.map((view, index) => (
-          <motion.button
-            key={view.id}
-            className="group relative flex items-center"
-            onClick={() => scrollToView(index)}
-            whileHover={{ scale: 1.2 }}
-          >
-            <span className="absolute right-8 rounded-md bg-background/80 px-2 py-1 text-sm opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover:opacity-100">
-              {view.label}
-            </span>
-            <div
-              className={cn(
-                "size-3 rounded-full transition-all",
-                activeView === index ? "bg-primary scale-125" : "bg-muted-foreground/30 hover:bg-muted-foreground/50",
-              )}
-            />
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Navigation Buttons */}
-      <AnimatePresence>
-        {activeView > 0 && (
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="fixed left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-3 shadow-lg backdrop-blur-sm hover:bg-background"
-            onClick={() => scrollToView(activeView - 1)}
-          >
-            <ChevronLeft className="size-6" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {activeView < views.length - 1 && (
-          <motion.button
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="fixed right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-3 shadow-lg backdrop-blur-sm hover:bg-background"
-            onClick={() => scrollToView(activeView + 1)}
-          >
-            <ChevronRight className="size-6" />
-          </motion.button>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

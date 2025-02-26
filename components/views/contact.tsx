@@ -61,25 +61,30 @@ export default function Contact() {
 
   return (
     <motion.div
-      className="container px-10 py-5 rounded-md"
+      className="container h-[calc(100vh-69px)] pt-5 overflow-y-auto scrollbar-none"
+      style={{
+        maxWidth: "calc(100vw - 116px)",
+        marginLeft: "calc(48px + 5px)",
+        marginRight: "58px",
+      }}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <div className="grid gap-8 lg:grid-cols-2">
-        <motion.div className="space-y-6" variants={itemVariants}>
+      <div className="grid gap-6 md:grid-cols-2 md:gap-8 pb-4 relative z-10">
+        <motion.div className="space-y-4 relative z-20" variants={itemVariants}>
           <div>
-            <h1 className="text-3xl font-bold">Contact Me</h1>
-            <p className="text-muted-foreground mt-2">
+            <h1 className="text-2xl font-bold sm:text-3xl">Contact Me</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Get in touch with me for any inquiries or collaboration opportunities.
             </p>
           </div>
-          <motion.div className="grid gap-4">
+          <motion.div className="grid gap-3 relative z-20 p-3 m-5">
             {[
               { icon: Mail, title: "Email", description: "your.email@example.com" },
               { icon: Phone, title: "Phone", description: "+1 (555) 123-4567" },
               { icon: MapPin, title: "Location", description: "Toronto, ON, Canada" },
-            ].map((item, index) => (
+            ].map((item) => (
               <motion.div
                 key={item.title}
                 variants={itemVariants}
@@ -99,13 +104,13 @@ export default function Contact() {
             ))}
           </motion.div>
         </motion.div>
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="relative z-20">
           <Card className={cardClasses}>
-            <CardHeader>
-              <CardTitle>Send me a message</CardTitle>
+            <CardHeader className="p-4">
+              <CardTitle className="text-xl">Send me a message</CardTitle>
               <CardDescription>Fill out the form below and I'll get back to you as soon as possible.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <motion.div className="grid gap-4 sm:grid-cols-2" variants={containerVariants}>
@@ -186,7 +191,7 @@ export default function Contact() {
                     />
                   </motion.div>
                   <motion.div variants={itemVariants} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full border-[1.5px] border-black dark:border-white">
                       Send Message
                     </Button>
                   </motion.div>

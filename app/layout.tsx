@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { NavigationProvider } from "@/components/providers"
 import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -11,7 +12,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Your Name - Portfolio",
   description: "Professional portfolio showcasing my work and services",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -23,15 +23,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <Navigation />
-          <main className="min-h-screen pt-16">{children}</main>
-          <Footer />
+          <NavigationProvider>
+            <Navigation />
+            <main className="min-h-screen pt-16 relative">{children}</main>
+            <Footer />
+          </NavigationProvider>
         </ThemeProvider>
       </body>
     </html>
   )
 }
 
-
-
-import './globals.css'

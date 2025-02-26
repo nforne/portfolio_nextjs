@@ -51,26 +51,35 @@ export default function Projects() {
 
   return (
     <motion.div
-      className="container px-10 py-5 rounded-md"
+      className="h-[calc(100vh-69px)] pt-5 overflow-y-auto scrollbar-none"
+      style={{
+        maxWidth: "calc(100vw - 116px)",
+        marginLeft: "calc(48px + 5px)",
+        marginRight: "58px",
+      }}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <motion.h1 className="text-3xl font-bold mb-8" variants={cardVariants}>
-        My Projects
-      </motion.h1>
-      <motion.div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" variants={containerVariants}>
-        {projects.map((project, index) => (
-          <motion.div
-            key={project.title}
-            variants={cardVariants}
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <ProjectCard {...project} />
-          </motion.div>
-        ))}
-      </motion.div>
+      <div className="max-w-5xl mx-auto relative z-10">
+        <motion.h1 className="text-2xl font-bold mb-6 sm:text-3xl px-3" variants={cardVariants}>
+          My Projects
+        </motion.h1>
+        <motion.div className="grid grid-cols-2 -m-8 relative z-20 p-3 m-5" variants={containerVariants}>
+          {projects.map((project, index) => (
+            <motion.div
+              key={project.title}
+              variants={cardVariants}
+              whileHover={{
+                scale: 1.02,
+                transition: { type: "spring", stiffness: 300 },
+              }}
+            >
+              <ProjectCard {...project} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </motion.div>
   )
 }

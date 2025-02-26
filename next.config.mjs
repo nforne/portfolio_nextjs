@@ -5,7 +5,6 @@ try {
   // ignore error
 }
 
-const isProd = process.env.NODE_ENV === 'production';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -14,13 +13,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  reactStrictMode: true,
   images: {
     unoptimized: true,
   },
-  assetPrefix: isProd ? '/portfolio_nextjs/' : '/portfolio_nextjs/',
-  basePath: isProd ? '/portfolio_nextjs' : '/portfolio_nextjs',
-  output: 'export',
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
@@ -50,6 +45,4 @@ function mergeConfig(nextConfig, userConfig) {
   }
 }
 
-
-export default nextConfig;
-
+export default nextConfig
