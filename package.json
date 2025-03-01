@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out"
+    "deploy": "gh-pages -d out",
+    "dp": "npm run build; gh-pages -d out"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
