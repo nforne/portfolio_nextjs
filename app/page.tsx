@@ -23,10 +23,11 @@ const views = [
 export default function Page() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [isHorizontalScrolling, setIsHorizontalScrolling] = useState(true)
   const { scrollToView, activeView, setActiveView } = useNavigation()
 
   const handleScroll = () => {
-    if (isScrolling || !containerRef.current) return
+    if (isScrolling || !containerRef.current || !isHorizontalScrolling) return
 
     const container = containerRef.current
     const scrollLeft = container.scrollLeft
@@ -40,13 +41,26 @@ export default function Page() {
 
   const handleWheel = useCallback(
     (e: WheelEvent) => {
+      if (!isHorizontalScrolling) return
       if (e.deltaY === 0) return
       e.preventDefault()
       const direction = e.deltaY > 0 ? 1 : -1
       const newIndex = Math.max(0, Math.min(views.length - 1, activeView + direction))
       scrollToView(newIndex)
     },
-    [activeView, scrollToView],
+    [activeView, scrollToView, isHorizontalScrolling],
+  )
+
+  const handleViewClick = useCallback(() => {
+    setIsHorizontalScrolling(false)
+  }, [])
+
+  const handleNavigationClick = useCallback(
+    (index: number) => {
+      setIsHorizontalScrolling(true)
+      scrollToView(index)
+    },
+    [scrollToView],
   )
 
   useEffect(() => {
@@ -58,7 +72,7 @@ export default function Page() {
   }, [handleWheel])
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden h-screen">
       <div className="h-full pt-[69px]">
         {/* Theme Toggle */}
         <div className="fixed left-6 top-20 z-50">
@@ -67,7 +81,10 @@ export default function Page() {
 
         <div
           ref={containerRef}
-          className="flex h-full snap-x snap-mandatory overflow-x-auto scrollbar-none px-6"
+          className={cn(
+            "flex h-full snap-x snap-mandatory overflow-x-auto scrollbar-none px-6",
+            !isHorizontalScrolling && "overflow-x-hidden",
+          )}
           onScroll={handleScroll}
         >
           {views.map((View, index) => (
@@ -79,6 +96,7 @@ export default function Page() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
+              onClick={handleViewClick}
             >
               <View.component />
             </motion.div>
@@ -91,7 +109,7 @@ export default function Page() {
             <motion.button
               key={view.id}
               className="group relative flex items-center"
-              onClick={() => scrollToView(index)}
+              onClick={() => handleNavigationClick(index)}
               whileHover={{ scale: 1.2 }}
             >
               <span className="absolute right-8 rounded-md bg-background/80 px-2 py-1 text-sm opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover:opacity-100">
@@ -115,7 +133,7 @@ export default function Page() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               className="fixed left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-3 shadow-lg backdrop-blur-sm hover:bg-background border-[1.5px] border-black dark:border-white"
-              onClick={() => scrollToView(activeView - 1)}
+              onClick={() => handleNavigationClick(activeView - 1)}
             >
               <ChevronLeft className="size-6" />
             </motion.button>
@@ -129,7 +147,7 @@ export default function Page() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               className="fixed right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-3 shadow-lg backdrop-blur-sm hover:bg-background border-[1.5px] border-black dark:border-white"
-              onClick={() => scrollToView(activeView + 1)}
+              onClick={() => handleNavigationClick(activeView + 1)}
             >
               <ChevronRight className="size-6" />
             </motion.button>

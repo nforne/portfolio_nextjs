@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Your Name - Portfolio",
   description: "Professional portfolio showcasing my work and services",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -24,9 +25,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <NavigationProvider>
-            <Navigation />
-            <main className="min-h-screen pt-16 relative">{children}</main>
-            <Footer />
+            <div className="min-h-screen flex flex-col">
+              <Navigation />
+              <main className="flex-1 pt-[74px]">{children}</main>
+              <Footer />
+            </div>
           </NavigationProvider>
         </ThemeProvider>
       </body>
@@ -34,3 +37,6 @@ export default function RootLayout({
   )
 }
 
+
+
+import './globals.css'

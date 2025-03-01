@@ -56,7 +56,7 @@ export function PDFViewer({ url, onClose }: PDFViewerProps) {
         isFullscreen ? "fixed mx-auto left-[calc(48px+5px)] right-[58px] bottom-0 top-[69px] rounded-none z-50" : ""
       }`}
       style={{
-        maxWidth: isFullscreen ? "calc(100vw - 116px)" : "64rem", // Increased from 56rem
+        maxWidth: isFullscreen ? "calc(100vw - 126px)" : "64rem", // Added 5px to each side (116px + 10px)
       }}
     >
       <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-4 border-b bg-background p-4">
